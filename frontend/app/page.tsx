@@ -5,7 +5,12 @@ import { ethers } from "ethers";
 import abi from "../lib/abi.json";
 import toast, { Toaster } from "react-hot-toast";
 
-const contractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+import Header from "../components/Header";
+import CounterCard from "../components/CounterCard";
+import WalletInfo from "../components/WalletInfo";
+import HistoryList from "../components/HistoryList";
+
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 export default function Home() {
   const [account, setAccount] = useState("");
@@ -133,121 +138,29 @@ export default function Home() {
 
 
   return (
-    <main className="min-h-screen bg-[#f1f1f1] text-white p-6">
-      <div className="absolute top-0 left-0 w-96 h-96 bg-purple-600 opacity-20 blur-3xl rounded-full"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-600 opacity-20 blur-3xl rounded-full"></div>
+    <main className="min-h-screen bg-black text-white p-6">
 
-    {/* HEADER */}
-    <div className="flex justify-between items-center mb-10">
-      <h1 className="text-white text-2xl font-bold tracking-tight">
-        ⚡ Web3 Dashboard
-      </h1>
+    <Header account={account} connectWallet={connectWallet} />
 
-      {!account ? (
-        <button
-          onClick={connectWallet}
-          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg"
-        >
-          Connect
-        </button>
-      ) : (
-        <div className="flex items-center gap-3 bg-white/10 px-3 py-2 rounded-lg">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <span className="text-sm font-mono">
-            {account.slice(0, 6)}...{account.slice(-4)}
-          </span>
-        </div>
-      )}
-    </div>
-
-    {/* MAIN GRID */}
     <div className="grid md:grid-cols-2 gap-6">
 
-      {/* CARD VALUE */}
-      <div className="bg-white/10 backdrop-blur-xl border border-white/10 p-6 rounded-2xl shadow-2xl hover:scale-[1.02] transition">
-  
-        <p className="text-gray-400 text-sm">Counter Value</p>
+      <CounterCard
+        value={value}
+        increment={increment}
+        loading={loading}
+        contract={contract}
+      />
 
-        <div className="text-6xl font-bold mt-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent transition-all duration-300">
-        {value}
-        </div>
-
-        <button
-          onClick={increment}
-          disabled={!contract || loading}
-          className="mt-6 w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:opacity-90 disabled:opacity-50 px-4 py-3 rounded-xl font-semibold shadow-lg transition"
-          >
-          {loading ? "Processing..." : "Increment 🚀"}
-        </button>
-
-      </div>
-
-      {/* INFO PANEL */}
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-2xl space-y-4 shadow-xl">
-
-        <div>
-          <p className="text-gray-400 text-sm">Network</p>
-          <p className="text-white font-semibold capitalize">
-            {network || "Unknown"}
-          </p>
-        </div>
-
-        <div>
-          <p className="text-gray-400 text-sm">Wallet</p>
-
-          {account ? (
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-sm">
-                {account.slice(0, 6)}...{account.slice(-4)}
-              </span>
-
-              <button
-                onClick={copyAddress}
-                className="text-xs bg-white/10 px-2 py-1 rounded hover:bg-white/20"
-                >
-                Copy
-              </button>
-            </div>
-
-          ) : (
-            <p className="text-gray-500 text-sm">Not connected</p>
-          )}
-
-        </div>
-
-        <div>
-          <p className="text-gray-400 text-sm">Status</p>
-          <p className="text-green-400">Active</p>
-        </div>
-
-      </div>
-
-      {/* 🔥 TARUH DI SINI (HISTORY) */}
-    <div className="mt-6 bg-white/5 p-4 rounded-xl max-h-60 overflow-y-auto">
-      <p className="text-gray-400 text-sm mb-2">Transaction History</p>
-
-      {history.length === 0 ? (
-        <p className="text-gray-500 text-sm">No transactions yet</p>
-      ) : (
-        history.map((tx, index) => (
-          <div
-            key={index}
-            className="text-sm flex justify-between border-b border-white/10 py-2"
-          >
-            <span className="font-mono">
-              {typeof tx.user === "string"
-              ? `${tx.user.slice(0, 6)}...${tx.user.slice(-4)}`
-              : "Invalid address"}
-            </span>
-            <span>+1 → {tx.value}</span>
-            <span className="text-gray-500">{tx.time}</span>
-          </div>
-        ))
-      )}
-      </div>
+      <WalletInfo
+        account={account}
+        network={network}
+        copyAddress={copyAddress}
+      />
 
     </div>
 
-    </main>
+    <HistoryList history={history} />
+
+  </main>
   );
 }
